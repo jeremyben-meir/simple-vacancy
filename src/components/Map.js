@@ -2,9 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl"
 import '../assets/App.css';
 import {colorDict, naics_string_dict, duration_string_dict,turnover_string_dict,vacancy_string_dict,legend_style,legend_style_left,legend_h4_style,legend_div_span_style} from "../assets/MapSettings.js";
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import MapboxWorker from 'worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker';
-mapboxgl.workerClass = MapboxWorker
+
+mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN
 
 export const Map = (params) => {

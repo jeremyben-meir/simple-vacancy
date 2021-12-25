@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl"
 import '../assets/App.css';
-import {colorDict, naics_string_dict, duration_string_dict,turnover_string_dict,vacancy_string_dict,legend_style,legend_style_left,legend_h4_style,legend_div_span_style} from "../assets/MapSettings.js";
+import { Button } from '@material-ui/core';
+import {legend_style,legend_style_left,legend_h4_style,legend_div_span_style} from "../assets/MapSettings.js";
 
 mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN
@@ -10,29 +11,104 @@ export const Map = (params) => {
 
     const LLIDPlaces = params["LLIDPlaces"];
     const BBLPlaces = params["BBLPlaces"];
-    const mapContainer = useRef()
+    const mapContainer = useRef();
     const [hover, setHover] = useState({})
     const [mapFocus, setMapFocus] = useState("Vacancy")
     const [mapSet, setMapSet] = useState()
 
-    const mapFocusDict = {
-        'Duration':{
-            "strings": duration_string_dict,
-            "places": LLIDPlaces
-        },
-        'Vacancy':{
-            "strings": vacancy_string_dict,
-            "places": BBLPlaces
-        },
-        // 'NAICS':{
-        //     "strings": naics_string_dict,
-        //     "places": LLIDPlaces
-        // },
-        // 'Turnover':{
-        //     "strings": turnover_string_dict,
-        //     "places": BBLPlaces
-        // }
+    const llid_htm = (
+        <div>
+            <b>NAME: </b>{hover.name && hover.name} <br/>
+            <b>ADDRESS: </b>{hover.address && hover.address}  <br/>
+            {/* <b>INDUSTRY: </b>{hover.industry && hover.industry} <br/> */}
+            <b>START DATE: </b>{hover.start && hover.start}
+        </div>
+    )
+    const bbl_htm = (
+        <div>
+            <b>BBL: </b>{hover.bbl && hover.bbl} <br/>
+            <b>VACANCY: </b>{hover.vacancy && hover.vacancy} <br/>
+            <b>MAX BUSINESS #: </b>{hover.maxbus && hover.maxbus}
+        </div>
+    )
+    
+    const set_key_bbl = (e) => {
+        const bbl = e.features[0].properties.BBL;
+        const vacancy = e.features[0].properties.Vacancy;
+        const maxbus = e.features[0].properties["Max Business"];
+
+        setHover({
+            "bbl": bbl,
+            "vacancy": vacancy,
+            "maxbus": maxbus
+        })
     }
+
+    const set_key_llid = (e) => {
+        const name = e.features[0].properties.Name;
+        const address = e.features[0].properties.Address;
+        const industry = e.features[0].properties["NAICS Title"];
+        const start = e.features[0].properties["Start Date"];
+        const end = e.features[0].properties["End Date"];
+
+        setHover({
+            "name": name,
+            "address": address,
+            "industry": industry,
+            "start": start,
+            "end": end,
+        })
+    }
+
+    const mapFocusDict = {
+        'Vacancy':{
+            "strings": [0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1],
+            "places": BBLPlaces,
+            "htm": bbl_htm,
+            "set_key": set_key_bbl,
+        },
+        'Duration':{
+            "strings": [0,1,2,3,4,5,6,7,8,9,"10+"],
+            "places": LLIDPlaces,
+            "htm": llid_htm,
+            "set_key": set_key_llid,
+        },
+        'Prediction':{
+            "strings": [0,1,2,3,4,5,6,7,8,9,"10+"],
+            "places": LLIDPlaces,
+            "htm": llid_htm,
+            "set_key": set_key_llid,
+        }
+    }
+
+    function get_key_vars(num, focus){
+        const color_arr = [];
+        const color_dict = {};
+        var red = 0
+        var green = 255
+        for (let i = 0; i < num; i++) {
+            const key = String(i)
+            const val = "rgba("+Math.round(red)+","+Math.round(green)+","+0+",100)"
+            color_arr.push(key)
+            color_arr.push(val)
+            color_dict[key] = val
+            if (i < num/2){
+                red += 255/(num/2)
+            } else {
+                green -= 255/(num/2)
+            }
+        }  
+        color_arr.push("rgba("+Math.round(red)+","+Math.round(green)+","+0+",100)")
+        color_dict[String(num)] = "rgba("+Math.round(red)+","+Math.round(green)+","+0+",100)"
+
+        console.log(color_dict);
+        return {
+            "color_arr": color_arr,
+            "color_dict": color_dict,
+        }
+    }
+
+    const [keyVars, setKeyVars] = useState(get_key_vars(10,mapFocus));
 
     const update_map = () => {
         const map = new mapboxgl.Map({
@@ -54,40 +130,17 @@ export const Map = (params) => {
                     data: mapFocusDict[key]["places"]
                 });
 
-                // console.log(mapFocusDict[key]["places"].default)
-                // console.log(BBLPlaces)
-                // console.log(LLIDPlaces)
-
                 map.addLayer({
                     'id': key,
                     'type': 'circle',
                     'source': 'places'+key,
-                    'layout': {
-                        'visibility': key==mapFocus ? 'visible' : 'none',
-                    },
+                    'layout': {'visibility': key==mapFocus ? 'visible' : 'none'},
                     'paint': {
                         'circle-radius': {
                             'base': 1.75,
-                            'stops': [
-                                [12, 2],
-                                [22, 50]
-                            ]
+                            'stops': [[12, 2],[22, 50]]
                         },
-                        'circle-color': [
-                            'match',
-                            ['get', key],
-                            "0", colorDict['0'],
-                            "1", colorDict['1'],
-                            "2", colorDict['2'],
-                            "3", colorDict['3'],
-                            "4", colorDict['4'],
-                            "5", colorDict['5'],
-                            "6", colorDict['6'],
-                            "7", colorDict['7'],
-                            "8", colorDict['8'],
-                            "9", colorDict['9'],
-                            /* other */ colorDict['10']
-                        ]
+                        'circle-color': ['match', ['get', "color"]].concat(keyVars["color_arr"])
                     }
                 });
                 var popup = new mapboxgl.Popup({
@@ -98,34 +151,7 @@ export const Map = (params) => {
                     
                 map.on('mouseenter', key, (e) => {
                     map.getCanvas().style.cursor = 'pointer'; // Change the cursor style as a UI indicator.
-                    if (key == "NAICS" || key == "Duration"){
-                        const name = e.features[0].properties.Name;
-                        const address = e.features[0].properties.Address;
-                        const industry = e.features[0].properties["NAICS Title"];
-                        const start = e.features[0].properties["Start Date"];
-                        const end = e.features[0].properties["End Date"];
-    
-                        setHover({
-                            "name": name,
-                            "address": address,
-                            "industry": industry,
-                            "start": start,
-                            "end": end,
-                        })
-                    } else {
-                        const bbl = e.features[0].properties.BBL;
-                        const vacancy = e.features[0].properties.vacancy;
-                        const turnover = e.features[0].properties.turnover;
-                        const maxbus = e.features[0].properties["Max Business"];
-    
-                        setHover({
-                            "bbl": bbl,
-                            "vacancy": vacancy,
-                            "turnover": turnover,
-                            "maxbus": maxbus
-                        })
-                    }
-                    
+                    mapFocusDict[key]["set_key"](e);
                 });
                     
                 map.on('mouseleave', key, () => {
@@ -140,38 +166,9 @@ export const Map = (params) => {
         });
     }
 
-    // useEffect(() => {
-
-    //     s3.getObject({
-    //         Bucket: process.env.REACT_APP_INTERNAL_BUCKET_NAME,
-    //         Key: 'data/bbl_timeline.json',
-    //     }, (err, data) => {
-    //         if (err) {
-    //             console.log(err, err.stack);
-    //         } else {
-    //             var response = JSON.parse(data.Body.toString())
-    //             setBBLPlaces(response)
-    //         }
-    //     });
-
-    //     s3.getObject({
-    //         Bucket: process.env.REACT_APP_INTERNAL_BUCKET_NAME,
-    //         Key: 'data/llid_timeline.json',
-    //     }, (err, data) => {
-    //         if (err) {
-    //             console.log(err, err.stack);
-    //         } else {
-    //             var response = JSON.parse(data.Body.toString())
-    //             setLLIDPlaces(response)
-    //         }
-    //     });
-
-    //     // update_map()            
-    // },[])
-
     useEffect(() => {
         update_map()  
-    },[LLIDPlaces])
+    },[])
 
     useEffect(() => {
         if (mapSet != null){
@@ -186,29 +183,14 @@ export const Map = (params) => {
     },[mapFocus])
 
     const handleChange = (event) => {
-        if (mapFocus ==  "Vacancy"){
+        if ( mapFocus ==  "Vacancy"){
             setMapFocus("Duration");
+        } else if ( mapFocus ==  "Duration") {
+            setMapFocus("Prediction");
         } else {
             setMapFocus("Vacancy");
         }
     }
-
-    const llid_htm = (
-        <div>
-            <b>NAME: </b>{hover.name && hover.name} <br/>
-            <b>ADDRESS: </b>{hover.address && hover.address}  <br/>
-            {/* <b>INDUSTRY: </b>{hover.industry && hover.industry} <br/> */}
-            <b>START DATE: </b>{hover.start && hover.start}
-        </div>
-    )
-    const bbl_htm = (
-        <div>
-            <b>BBL: </b>{hover.bbl && hover.bbl} <br/>
-            <b>VACANCY: </b>{hover.vacancy && hover.vacancy} <br/>
-            <b>TURNOVER: </b>{hover.turnover && hover.turnover} <br/>
-            <b>MAX BUSINESS #: </b>{hover.maxbus && hover.maxbus}
-        </div>
-    )
 
     return (
         <div> 
@@ -216,12 +198,12 @@ export const Map = (params) => {
                 <div id="state-legend" className="legend" style={legend_style}>
                     <h4 style={legend_h4_style}>{mapFocus}</h4>
                     {Object.entries(mapFocusDict[mapFocus]["strings"]).map((item, index) => 
-                        <div key={"map".concat("",index)}><span style={{...legend_div_span_style, backgroundColor: colorDict[index]}}></span>{mapFocusDict[mapFocus]["strings"][index]}</div>
+                        <div key={"map".concat("",index)}><span style={{...legend_div_span_style, backgroundColor: keyVars["color_dict"][index]}}></span>{mapFocusDict[mapFocus]["strings"][index]}</div>
                     )}
                 </div>
                 <div id="state-legend" className="legend" style={legend_style_left}>
-                    {(mapFocus == "Vacancy" || mapFocus == "Turnover") ? bbl_htm : llid_htm}
-                    <input type="checkbox" className="toggle-switch-checkbox" name="checkbox" id="checkbox" onChange={handleChange} /> Vacancy / Duration
+                    {mapFocusDict[mapFocus]["htm"]}
+                    <Button variant="outlined" onClick={handleChange}> {mapFocus} </Button>
                 </div>
             </div>
         </div>

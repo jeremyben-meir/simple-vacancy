@@ -1,69 +1,69 @@
-export const colorDict = {
-    "0" : '#00ff00',
-    "1" : '#30ff00',
-    "2" : '#60ff00',
-    "3" : '#90ff00',
-    "4" : '#c0ff00',
-    "5" : '#ffff00',
-    "6" : '#ffc000',
-    "7" : '#ff9000',
-    "8" : '#ff6000',
-    "9" : '#ff3000',
-    "10" : '#ff0000'
-}
+// export const colorDict = {
+//     "0" : '#00ff00',
+//     "1" : '#30ff00',
+//     "2" : '#60ff00',
+//     "3" : '#90ff00',
+//     "4" : '#c0ff00',
+//     "5" : '#ffff00',
+//     "6" : '#ffc000',
+//     "7" : '#ff9000',
+//     "8" : '#ff6000',
+//     "9" : '#ff3000',
+//     "10" : '#ff0000'
+// }
 
-export const naics_string_dict = {
-    "0" : 'Raw Goods Producers',
-    "1" : 'Raw Goods Processors',
-    "2" : 'Materials Manufacturers',
-    "3" : 'Equipment/Vehicle Manufacturers',
-    "4" : 'Goods Wholesalers; Groceries',
-    "5" : 'Goods Retailers',
-    "6" : 'Transportation',
-    "7" : 'Business-oriented Services',
-    "8" : 'Personal Services',
-    "9" : 'Govt. and Civil Society',
-}
+// export const vacancy_string_dict = {
+//     "0" : '0-.1',
+//     "1" : '.1-.2',
+//     "2" : '.2-.3',
+//     "3" : '.3-.4',
+//     "4" : '.4-.5',
+//     "5" : '.5-.6',
+//     "6" : '.6-.7',
+//     "7" : '.7-.8',
+//     "8" : '.8-.9',
+//     "9" : '.9-1',
+// }
 
-export const duration_string_dict = {
-    "0" : '0-1',
-    "1" : '1-2',
-    "2" : '2-3',
-    "3" : '3-4',
-    "4" : '4-5',
-    "5" : '5-6',
-    "6" : '6-7',
-    "7" : '7-8',
-    "8" : '8-9',
-    "9" : '9-10',
-    "10" : '10+'
-}
+// export const duration_string_dict = {
+//     "0" : '0-1',
+//     "1" : '1-2',
+//     "2" : '2-3',
+//     "3" : '3-4',
+//     "4" : '4-5',
+//     "5" : '5-6',
+//     "6" : '6-7',
+//     "7" : '7-8',
+//     "8" : '8-9',
+//     "9" : '9-10',
+//     "10" : '10+'
+// }
 
-export const turnover_string_dict = {
-    "0" : '<(.8)',
-    "1" : '(.8)-(.6)',
-    "2" : '(.6)-(.4)',
-    "3" : '(.4)-(.2)',
-    "4" : '(.2)-0',
-    "5" : '0-.2',
-    "6" : '.2-.4',
-    "7" : '.4-.6',
-    "8" : '.6-.8',
-    "9" : '>.8',
-}
+// export const naics_string_dict = {
+//     "0" : 'Raw Goods Producers',
+//     "1" : 'Raw Goods Processors',
+//     "2" : 'Materials Manufacturers',
+//     "3" : 'Equipment/Vehicle Manufacturers',
+//     "4" : 'Goods Wholesalers; Groceries',
+//     "5" : 'Goods Retailers',
+//     "6" : 'Transportation',
+//     "7" : 'Business-oriented Services',
+//     "8" : 'Personal Services',
+//     "9" : 'Govt. and Civil Society',
+// }
 
-export const vacancy_string_dict = {
-    "0" : '0-.1',
-    "1" : '.1-.2',
-    "2" : '.2-.3',
-    "3" : '.3-.4',
-    "4" : '.4-.5',
-    "5" : '.5-.6',
-    "6" : '.6-.7',
-    "7" : '.7-.8',
-    "8" : '.8-.9',
-    "9" : '.9-1',
-}
+// export const turnover_string_dict = {
+//     "0" : '<(.8)',
+//     "1" : '(.8)-(.6)',
+//     "2" : '(.6)-(.4)',
+//     "3" : '(.4)-(.2)',
+//     "4" : '(.2)-0',
+//     "5" : '0-.2',
+//     "6" : '.2-.4',
+//     "7" : '.4-.6',
+//     "8" : '.6-.8',
+//     "9" : '>.8',
+// }
 
 export const legend_style = {
     backgroundColor: '#fff',

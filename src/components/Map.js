@@ -11,6 +11,7 @@ export const Map = (params) => {
 
     const LLIDPlaces = params["LLIDPlaces"];
     const BBLPlaces = params["BBLPlaces"];
+    const predictions = params["predictions"];
     const mapContainer = useRef();
     const [hover, setHover] = useState({})
     const [mapFocus, setMapFocus] = useState("Vacancy")
@@ -75,40 +76,42 @@ export const Map = (params) => {
         },
         'Prediction':{
             "strings": [0,1,2,3,4,5,6,7,8,9,"10+"],
-            "places": LLIDPlaces,
+            "places": predictions,
             "htm": llid_htm,
             "set_key": set_key_llid,
         }
     }
 
-    function get_key_vars(num, focus){
+    function get_key_vars(focus){
+        const num = mapFocusDict[focus]["strings"].length;
         const color_arr = [];
         const color_dict = {};
+        const color = (num-1)/2
         var red = 0
         var green = 255
         for (let i = 0; i < num; i++) {
-            const key = String(i)
-            const val = "rgba("+Math.round(red)+","+Math.round(green)+","+0+",100)"
-            color_arr.push(key)
+            const key = String(i);
+            const val = "rgba("+Math.round(red)+","+Math.round(green)+","+0+",100)";
+            if (i < num-1){
+                color_arr.push(key)
+            }
             color_arr.push(val)
             color_dict[key] = val
-            if (i < num/2){
-                red += 255/(num/2)
+            if (i <= color-1){
+                red += 255/color
+            } else if (i > color-1 && i < color) {
+                [red, green] = [green, red]
             } else {
-                green -= 255/(num/2)
+                green -= 255/color
             }
-        }  
-        color_arr.push("rgba("+Math.round(red)+","+Math.round(green)+","+0+",100)")
-        color_dict[String(num)] = "rgba("+Math.round(red)+","+Math.round(green)+","+0+",100)"
-
-        console.log(color_dict);
+        }
         return {
             "color_arr": color_arr,
             "color_dict": color_dict,
         }
     }
 
-    const [keyVars, setKeyVars] = useState(get_key_vars(10,mapFocus));
+    const keyVars = get_key_vars(mapFocus);
 
     const update_map = () => {
         const map = new mapboxgl.Map({
@@ -208,7 +211,4 @@ export const Map = (params) => {
             </div>
         </div>
     )
-
-
-    
 }

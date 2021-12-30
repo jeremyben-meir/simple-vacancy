@@ -75,7 +75,7 @@ export const Map = (params) => {
             "set_key": set_key_llid,
         },
         'Prediction':{
-            "strings": [0,1,2,3,4,5,6,7,8,9,"10+"],
+            "strings": ["Survive","Fail"],
             "places": predictions,
             "htm": llid_htm,
             "set_key": set_key_llid,
@@ -105,6 +105,8 @@ export const Map = (params) => {
                 green -= 255/color
             }
         }
+        // console.log(color_arr)
+        // console.log(color_dict)
         return {
             "color_arr": color_arr,
             "color_dict": color_dict,
@@ -176,10 +178,12 @@ export const Map = (params) => {
     useEffect(() => {
         if (mapSet != null){
             for(let [key, value] of Object.entries(mapFocusDict)){
+                const colors = ['match', ['get', "color"]].concat(keyVars["color_arr"])
                 if (key != mapFocus) {
                     mapSet.setLayoutProperty(key, 'visibility', 'none');
                 } else {
                     mapSet.setLayoutProperty(key, 'visibility','visible');
+                    mapSet.setPaintProperty(key, 'circle-color',colors);
                 }       
             }      
         }
